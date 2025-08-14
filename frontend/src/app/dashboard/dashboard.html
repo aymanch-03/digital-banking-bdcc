@@ -1,0 +1,129 @@
+<div class="dashboard-wrapper p-4" style="background: #f8fafc; min-height: 100vh;">
+  <div class="container">
+    <!-- Header Section -->
+    <div class="mb-2 text-start">
+      <h1 class="fw-bold" style="color: #1e293b; font-size: 1.9rem; margin-bottom: 0.1rem;">
+        Banking Dashboard
+      </h1>
+      <p class="text-muted fs-5" style="color: #64748b;">Monitor your banking operations and customer insights</p>
+    </div>
+
+    <!-- Loading State -->
+    <div *ngIf="!allChartsReady" class="loading-container text-center py-5">
+      <div class="d-flex flex-column align-items-center">
+        <div class="spinner-border text-primary mb-3" role="status" style="width: 3rem; height: 3rem;">
+          <span class="visually-hidden">Loading...</span>
+        </div>
+        <p class="text-muted fs-5" style="color: #64748b;">Loading dashboard data...</p>
+      </div>
+    </div>
+
+    <!-- Dashboard Content -->
+    <div *ngIf="allChartsReady">
+      <!-- Statistics Cards -->
+      <div class="row g-4 mb-4">
+        <div class="col-md-3" *ngFor="let stat of statCards">
+          <div class="card h-100 border" style="background: white; border-radius: 8px;">
+            <div class="card-body p-4 text-center">
+              <div class="mb-3">
+                <i 
+                  [class]="getStatIcon(stat.label)" 
+                  style="color: #3b82f6; font-size: 1.5rem;">
+                </i>
+              </div>
+              <h5 class="fw-medium mb-2" style="color: #64748b; font-size: 0.875rem; text-transform: uppercase; letter-spacing: 0.5px;">
+                {{ stat.label }}
+              </h5>
+              <p class="fw-bold mb-1" style="color: #1e293b; font-size: 1.5rem;">
+                {{ stat.value }}
+              </p>
+              <!-- Trend Indicator -->
+              <div class="d-flex align-items-center justify-content-center gap-1">
+                <i class="bi bi-arrow-up-circle-fill" style="color: #10b981; font-size: 0.875rem;"></i>
+                <small style="color: #10b981; font-size: 0.75rem;">+12.5%</small>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Charts Section -->
+      <div class="row g-4">
+        <!-- Account Distribution Chart -->
+        <div class="col-lg-6">
+          <div class="card border h-100" style="background: white; border-radius: 8px;">
+            <div class="card-header bg-transparent border-0 p-4 pb-0">
+              <h5 class="fw-semibold mb-0" style="color: #1e293b;">
+                <i class="bi bi-pie-chart me-2" style="color: #3b82f6;"></i>
+                Account Distribution
+              </h5>
+              <p class="text-muted mb-0 mt-2" style="color: #64748b; font-size: 0.875rem;">
+                Overview of current vs. savings accounts
+              </p>
+            </div>
+            <div class="card-body p-4 pt-0">
+              <apx-chart
+                [series]="pieChartOptions.series"
+                [chart]="pieChartOptions.chart"
+                [labels]="pieChartOptions.labels"
+                [title]="pieChartOptions.title"
+                [colors]="['#3b82f6', '#f59e42']"
+              >
+              </apx-chart>
+            </div>
+          </div>
+        </div>
+
+        <!-- Operations Overview Chart -->
+        <div class="col-lg-6">
+          <div class="card border h-100" style="background: white; border-radius: 8px;">
+            <div class="card-header bg-transparent border-0 p-4 pb-0">
+              <h5 class="fw-semibold mb-0" style="color: #1e293b;">
+                <i class="bi bi-activity me-2" style="color: #3b82f6;"></i>
+                Operations Overview
+              </h5>
+              <p class="text-muted mb-0 mt-2" style="color: #64748b; font-size: 0.875rem;">
+                Monthly banking operations summary
+              </p>
+            </div>
+            <div class="card-body p-4 pt-0">
+              <apx-chart
+                [series]="barChartOperationsOptions.series"
+                [chart]="barChartOperationsOptions.chart"
+                [xaxis]="barChartOperationsOptions.xaxis"
+                [title]="barChartOperationsOptions.title"
+                [colors]="['#f59e42', '#ef4444', '#3b82f6', '#10b981']"
+              >
+              </apx-chart>
+            </div>
+          </div>
+        </div>
+
+        <!-- Customer Growth Chart -->
+        <div class="col-12">
+          <div class="card border" style="background: white; border-radius: 8px;">
+            <div class="card-header bg-transparent border-0 p-4 pb-0">
+              <h5 class="fw-semibold mb-0" style="color: #1e293b;">
+                <i class="bi bi-graph-up me-2" style="color: #3b82f6;"></i>
+                Customer Growth Trends
+              </h5>
+              <p class="text-muted mb-0 mt-2" style="color: #64748b; font-size: 0.875rem;">
+                Customer acquisition and growth patterns over time
+              </p>
+            </div>
+            <div class="card-body p-4 pt-0">
+              <apx-chart
+                [series]="barChartCustomersOptions.series"
+                [chart]="barChartCustomersOptions.chart"
+                [xaxis]="barChartCustomersOptions.xaxis"
+                [title]="barChartCustomersOptions.title"
+                [colors]="['#6366f1', '#3b82f6', '#10b981', '#f59e42']"
+              >
+              </apx-chart>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

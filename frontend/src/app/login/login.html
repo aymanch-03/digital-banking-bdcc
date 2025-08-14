@@ -1,0 +1,40 @@
+<div class="d-flex align-items-center justify-content-center vh-100 bg-light">
+  <div class="card border p-5 bg-white" style="width: 420px">
+    <div class="text-center mb-4">
+      <h4 class="mt-3 fw-bold text-dark">Welcome Back</h4>
+      <p class="text-muted mb-0">Sign in to your account</p>
+    </div>
+
+    <form [formGroup]="formLogin" (ngSubmit)="handleLogin()">
+      <div class="mb-4">
+        <label class="form-label text-dark">Username</label>
+        <input
+          type="text"
+          class="form-control border-0 border-bottom rounded-0"
+          formControlName="username"
+          placeholder="ex. aymanch"
+          style="background: transparent; padding: 12px 0; opacity: 1;"
+          [ngStyle]="{'::placeholder': {'opacity': '0.5'}}"
+        />
+      </div>
+
+      <div class="mb-4">
+        <label class="form-label text-dark">Password</label>
+        <input
+          type="password"
+          class="form-control border-0 border-bottom rounded-0"
+          formControlName="password"
+          placeholder="••••••••"
+          style="background: transparent; padding: 12px 0; opacity: 1;"
+          [ngStyle]="{'::placeholder': {'opacity': '0.5'}}"
+        />
+      </div>
+
+      <div class="d-grid">
+        <button class="btn btn-dark rounded-0 fw-medium py-3">
+          Sign In
+        </button>
+      </div>
+    </form>
+  </div>
+</div>

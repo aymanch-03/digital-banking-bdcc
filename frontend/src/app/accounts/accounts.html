@@ -1,0 +1,386 @@
+<div class="container-fluid p-4" style="background: #f8fafc; min-height: 100vh;">
+  <!-- Top Header Section -->
+  <div class="row mb-4">
+    <div class="col-12">
+      <div class="d-flex justify-content-between align-items-center">
+        <div>
+          <h1 class="fw-bold mb-1" style="color: #1e293b; font-size: 2rem;">
+Account Management
+          </h1>
+          <p class="text-muted mb-0" style="color: #64748b;">Search, view, and manage banking accounts</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Search Section -->
+  <div class="row mb-4">
+    <div class="col-12">
+      <div class="card border" style="background: white; border-radius: 12px;">
+        <div class="card-body p-4">
+          <form [formGroup]="accountFormGroup" (ngSubmit)="handleSearchAccount()" class="row g-3 align-items-end">
+            <div class="col-md-4">
+              <label class="form-label fw-medium mb-2" style="color: #475569;">Account ID</label>
+              <input
+                type="text"
+                formControlName="id"
+                class="form-control"
+                placeholder="Enter account ID to search..."
+                style="border: 1px solid #e2e8f0; border-radius: 8px; padding: 12px;"
+              />
+            </div>
+            <div class="col-md-3">
+              <label class="form-label fw-medium mb-2" style="color: #475569;">Account Type</label>
+              <select class="form-select" style="border: 1px solid #e2e8f0; border-radius: 8px; padding: 12px;">
+                <option value="">All Types</option>
+                <option value="Current">Current</option>
+                <option value="Saving">Saving</option>
+              </select>
+            </div>
+            <div class="col-md-3">
+              <label class="form-label fw-medium mb-2" style="color: #475569;">Status</label>
+              <select class="form-select" style="border: 1px solid #e2e8f0; border-radius: 8px; padding: 12px;">
+                <option value="">All Status</option>
+                <option value="ACTIVE">Active</option>
+                <option value="PENDING">Pending</option>
+                <option value="BLOCKED">Blocked</option>
+              </select>
+            </div>
+            <div class="col-md-2">
+              <button type="submit" class="btn w-100" style="background: #6366f1; color: white; border: none; border-radius: 8px; padding: 12px;">
+                <i class="bi bi-search-heart me-2"></i>Search
+              </button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Account Details Section -->
+  <div class="row" *ngIf="(accountObservable | async) as accountDetails">
+    <!-- Left Column - Account Information -->
+    <div class="col-lg-8">
+      <div class="card border mb-4" style="background: white; border-radius: 12px;">
+        <div class="card-header bg-transparent border-0 p-4">
+          <div class="d-flex justify-content-between align-items-center">
+            <h5 class="fw-semibold mb-0" style="color: #1e293b;">
+              <i class="bi bi-clipboard-data me-2" style="color: #6366f1;"></i>Account Information
+            </h5>
+            <div class="d-flex gap-2">
+              <span class="badge px-3 py-2" style="background: #f8fafc; color: #475569; border: 1px solid #e2e8f0; border-radius: 6px;">
+                {{ accountDetails.type }}
+              </span>
+              <span
+                class="badge px-3 py-2 rounded-pill text-white"
+                [ngClass]="{
+                  'bg-success': accountDetails.status === 'ACTIVE',
+                  'bg-warning text-dark': accountDetails.status === 'PENDING',
+                  'bg-danger': accountDetails.status === 'BLOCKED' || accountDetails.status === 'CLOSED',
+                  'bg-secondary': accountDetails.status === 'INACTIVE'
+                }"
+              >
+                {{ accountDetails.status }}
+              </span>
+            </div>
+          </div>
+        </div>
+        <div class="card-body p-4 pt-0">
+          <!-- Account Stats Row -->
+          <div class="row g-4 mb-4">
+            <div class="col-md-4">
+              <div class="text-center p-3" style="background: #f8fafc; border-radius: 8px;">
+                <h6 class="fw-medium mb-2" style="color: #64748b; font-size: 0.875rem;">Current Balance</h6>
+                <h3 class="fw-bold mb-0" 
+                    [ngClass]="{
+                      'text-success': accountDetails.balance >= 0,
+                      'text-danger': accountDetails.balance < 0
+                    }">
+                  {{ accountDetails.balance | number:'1.2-2' }} MAD
+                </h3>
+              </div>
+            </div>
+            <div class="col-md-4">
+              <div class="text-center p-3" style="background: #f8fafc; border-radius: 8px;">
+                <h6 class="fw-medium mb-2" style="color: #64748b; font-size: 0.875rem;">Account ID</h6>
+                <code class="fw-bold" style="color: #1e293b; font-size: 1.1rem;">{{ accountFormGroup.value.id }}</code>
+              </div>
+            </div>
+            <div class="col-md-4">
+              <div class="text-center p-3" style="background: #f8fafc; border-radius: 8px;">
+                <h6 class="fw-medium mb-2" style="color: #64748b; font-size: 0.875rem;">Total Operations</h6>
+                <h3 class="fw-bold mb-0" style="color: #1e293b;">{{ accountDetails.operations?.length || 0 }}</h3>
+              </div>
+            </div>
+          </div>
+
+          <!-- Account Settings -->
+          <div class="row g-4 mb-4">
+            <div class="col-md-6" *ngIf="accountDetails.type === 'Saving'">
+              <div class="p-3" style="background: #f8fafc; border-radius: 8px;">
+                <label class="form-label fw-medium mb-3" style="color: #475569;">Interest Rate (%)</label>
+                <div class="input-group">
+                  <input
+                    type="number"
+                    [(ngModel)]="newInterestRate"
+                    class="form-control"
+                    min="0"
+                    step="0.1"
+                    style="border: 1px solid #e2e8f0; border-radius: 6px;"
+                  />
+                  <button
+                    class="btn ms-3"
+                    (click)="updateInterestRate()"
+                    style="background: #10b981; color: white; border: none; border-radius: 6px;"
+                  >
+                    <i class="bi bi-arrow-clockwise me-1"></i> Update
+                  </button>
+                </div>
+              </div>
+            </div>
+            <div class="col-md-6" *ngIf="accountDetails.type === 'Current'">
+              <div class="p-3" style="background: #f8fafc; border-radius: 8px;">
+                <label class="form-label fw-medium mb-3" style="color: #475569;">Overdraft Limit (MAD)</label>
+                <div class="input-group">
+                  <input
+                    type="number"
+                    [(ngModel)]="newOverdraftLimit"
+                    class="form-control"
+                    min="0"
+                    step="100"
+                    style="border: 1px solid #e2e8f0; border-radius: 6px;"
+                  />
+                  <button
+                    class="btn ms-3"
+                    (click)="updateOverdraftLimit()"
+                    style="background: #10b981; color: white; border: none; border-radius: 6px;"
+                  >
+                    <i class="bi bi-arrow-clockwise me-1"></i> Update
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Operations Filter -->
+          <div class="mb-4">
+            <h6 class="fw-semibold mb-4" style="color: #1e293b;">
+              <i class="bi bi-sliders me-2" style="color: #6366f1;"></i>Filter Operations
+            </h6>
+            <form [formGroup]="filterFormGroup" (ngSubmit)="searchOperations()" class="row g-4">
+              <div class="col-md-3">
+                <input
+                  type="date"
+                  formControlName="startDate"
+                  class="form-control"
+                  style="border: 1px solid #e2e8f0; border-radius: 6px;"
+                />
+              </div>
+              <div class="col-md-3">
+                <input
+                  type="date"
+                  formControlName="endDate"
+                  class="form-control"
+                  style="border: 1px solid #e2e8f0; border-radius: 6px;"
+                />
+              </div>
+              <div class="col-md-2">
+                <input
+                  type="number"
+                  formControlName="minAmount"
+                  class="form-control"
+                  placeholder="Min Amount"
+                  style="border: 1px solid #e2e8f0; border-radius: 6px;"
+                />
+              </div>
+              <div class="col-md-2">
+                <input
+                  type="number"
+                  formControlName="maxAmount"
+                  class="form-control"
+                  placeholder="Max Amount"
+                  style="border: 1px solid #e2e8f0; border-radius: 6px;"
+                />
+              </div>
+              <div class="col-md-2">
+                <button type="submit" class="btn w-100" style="background: #6366f1; color: white; border: none; border-radius: 6px;">
+                  <i class="bi bi-sliders me-1"></i> Filter
+                </button>
+              </div>
+            </form>
+          </div>
+
+          <!-- Operations Table -->
+          <div class="table-responsive">
+            <table class="table table-hover align-middle">
+              <thead style="background: #f8fafc;">
+                <tr>
+                  <th style="color: #475569; font-weight: 600; padding: 12px;">ID</th>
+                  <th style="color: #475569; font-weight: 600; padding: 12px;">Date</th>
+                  <th class="text-end" style="color: #475569; font-weight: 600; padding: 12px;">Amount</th>
+                  <th class="text-center" style="color: #475569; font-weight: 600; padding: 12px;">Type</th>
+                  <th class="text-center" style="color: #475569; font-weight: 600; padding: 12px;">Actions</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr *ngFor="let op of accountDetails.operations">
+                  <td style="color: #1e293b; padding: 12px;">{{ op.id }}</td>
+                  <td style="color: #1e293b; padding: 12px;">
+                    {{ op.operationDate | date: 'dd-MM-yyyy HH:mm:ss' }}
+                  </td>
+                  <td class="text-end" style="color: #1e293b; padding: 12px;">{{ op.amount | number: '1.2-2' }}</td>
+                  <td class="text-center">
+                    <span
+                      class="badge"
+                      [ngClass]="op.type === 'CREDIT' ? 'bg-success' : 'bg-danger'"
+                    >
+                      {{ op.type }}
+                    </span>
+                  </td>
+                  <td class="text-center">
+                    <button
+                      class="btn btn-sm"
+                      *ngIf="!op.cancelled"
+                      (click)="onCancelOperation(op.id)"
+                      style="background: #ef4444; color: white; border: none; border-radius: 6px;"
+                    >
+                      <i class="bi bi-x-lg me-1"></i> Cancel
+                    </button>
+                    <span *ngIf="op.cancelled" class="text-muted fst-italic">Cancelled</span>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+
+          <!-- Pagination -->
+          <div class="d-flex justify-content-center mt-4">
+            <ul class="pagination">
+              <li
+                *ngFor="let item of [].constructor(accountDetails.totalPages); let page = index"
+                class="page-item"
+                [ngClass]="{ 'active': page === currentPage }"
+              >
+                <a class="page-link" (click)="goToPage(page)" style="color: #6366f1; border-color: #e2e8f0;">{{ page }}</a>
+              </li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Right Column - Operations & Management -->
+    <div class="col-lg-4">
+      <!-- Operations Management -->
+      <div class="card border mb-4" style="background: white; border-radius: 12px;">
+        <div class="card-header bg-transparent border-0 p-4">
+          <h5 class="fw-semibold mb-0" style="color: #1e293b;">
+            <i class="bi bi-cash-stack me-2" style="color: #6366f1;"></i>New Operation
+          </h5>
+        </div>
+        <div class="card-body p-4 pt-0">
+          <form [formGroup]="operationFormGroup" (ngSubmit)="handleAccountOperation()">
+            <div class="mb-4">
+              <label class="form-label fw-medium mb-3" style="color: #475569;">Operation Type</label>
+              <div class="d-flex gap-3">
+                <div
+                  *ngFor="let type of ['DEBIT', 'CREDIT', 'TRANSFER']"
+                  class="form-check"
+                >
+                  <input
+                    type="radio"
+                    class="form-check-input"
+                    [value]="type"
+                    formControlName="operationType"
+                    [id]="type"
+                    style="accent-color: #6366f1;"
+                  />
+                  <label class="form-check-label ms-2" [for]="type" style="color: #475569;">{{ type }}</label>
+                </div>
+              </div>
+            </div>
+            
+            <div class="mb-4" *ngIf="operationFormGroup.value.operationType === 'TRANSFER'">
+              <label class="form-label fw-medium mb-3" style="color: #475569;">Receiver Account ID</label>
+              <input
+                type="text"
+                formControlName="accountDestination"
+                class="form-control"
+                placeholder="Enter destination account ID..."
+                style="border: 1px solid #e2e8f0; border-radius: 6px;"
+              />
+            </div>
+            
+            <div class="mb-4">
+              <label class="form-label fw-medium mb-3" style="color: #475569;">Amount (MAD)</label>
+              <input
+                type="number"
+                formControlName="amount"
+                class="form-control"
+                placeholder="Enter amount..."
+                style="border: 1px solid #e2e8f0; border-radius: 6px;"
+              />
+            </div>
+            
+            <div class="mb-4">
+              <label class="form-label fw-medium mb-3" style="color: #475569;">Description</label>
+              <input
+                type="text"
+                formControlName="description"
+                class="form-control"
+                placeholder="Enter operation description..."
+                style="border: 1px solid #e2e8f0; border-radius: 6px;"
+              />
+            </div>
+            
+            <button type="submit" class="btn w-100 fw-bold" style="background: #10b981; color: white; border: none; border-radius: 8px; padding: 12px;">
+              <i class="bi bi-check-circle me-2"></i>Execute Operation
+            </button>
+          </form>
+        </div>
+      </div>
+
+      <!-- Account Management (Admin Only) -->
+      <div class="card border" *ngIf="authService.roles.includes('ADMIN')" style="background: white; border-radius: 12px;">
+        <div class="card-header bg-transparent border-0 p-4">
+          <h5 class="fw-semibold mb-0" style="color: #1e293b;">
+            <i class="bi bi-gear me-2" style="color: #6366f1;"></i>Account Control
+          </h5>
+        </div>
+        <div class="card-body p-4 pt-0">
+          <div class="mb-4">
+            <label class="form-label fw-medium mb-3" style="color: #475569;">Change Account Status</label>
+            <div class="input-group">
+              <select
+                class="form-select"
+                [(ngModel)]="selectedStatus"
+                [ngModelOptions]="{ standalone: true }"
+                style="border: 1px solid #e2e8f0; border-radius: 6px;"
+              >
+                <option *ngFor="let status of statuses" [value]="status">
+                  {{ status }}
+                </option>
+              </select>
+              <button
+                class="btn ms-3"
+                type="button"
+                (click)="updateStatus()"
+                style="background: #6366f1; color: white; border: none; border-radius: 6px;"
+              >
+                <i class="bi bi-check2-circle me-1"></i>Update
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Loading State -->
+  <div *ngIf="!(accountObservable | async)" class="text-center py-5">
+    <div class="spinner-border text-primary mb-3" role="status" style="width: 3rem; height: 3rem;">
+      <span class="visually-hidden">Loading...</span>
+    </div>
+    <p class="text-muted fs-5" style="color: #64748b;">Loading account data...</p>
+  </div>
+</div>

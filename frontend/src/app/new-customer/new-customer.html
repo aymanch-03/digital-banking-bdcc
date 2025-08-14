@@ -1,0 +1,112 @@
+<div class="container-fluid p-4" style="background: #f8fafc; min-height: 100vh;">
+  <!-- Top Header Section -->
+  <div class="row mb-4">
+    <div class="col-12">
+      <div class="text-center">
+        <h1 class="fw-bold mb-1" style="color: #1e293b; font-size: 2rem;">
+          New Customer Registration
+        </h1>
+        <p class="text-muted mb-0" style="color: #64748b;">
+          Create a new customer account for banking services
+        </p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Customer Registration Form -->
+  <div class="row justify-content-center">
+    <div class="col-lg-6 col-md-8">
+      <div class="card border" style="background: white; border-radius: 12px;">
+        <div class="card-header bg-transparent border-0 p-4">
+          <h5 class="fw-semibold mb-0" style="color: #1e293b;">
+            <i class="bi bi-person-plus me-2" style="color: #6366f1;"></i>Customer Information
+          </h5>
+          <p class="text-muted mb-0 mt-2" style="color: #64748b; font-size: 0.875rem;">
+            Please provide the required information to create a new customer account
+          </p>
+        </div>
+        <div class="card-body p-4 pt-0">
+          <form
+            [formGroup]="newCustomerFormGroup"
+            (ngSubmit)="handleSaveCustomer()"
+            class="row g-4"
+          >
+            <!-- Customer Name Field -->
+            <div class="col-12">
+              <label class="form-label fw-medium mb-3" style="color: #475569;">
+                <i class="bi bi-person-circle me-2" style="color: #6366f1;"></i>Full Name
+              </label>
+              <input
+                type="text"
+                formControlName="name"
+                class="form-control"
+                placeholder="Enter customer's full name (e.g., John Doe)"
+                style="border: 1px solid #e2e8f0; border-radius: 8px; padding: 12px;"
+              />
+              <div class="mt-2" *ngIf="newCustomerFormGroup.controls['name'].touched && newCustomerFormGroup.controls['name'].errors?.['required']">
+                <span class="text-danger small d-flex align-items-center">
+                  <i class="bi bi-exclamation-circle me-1"></i>Customer name is required
+                </span>
+              </div>
+            </div>
+
+            <!-- Customer Email Field -->
+            <div class="col-12">
+              <label class="form-label fw-medium mb-3" style="color: #475569;">
+                <i class="bi bi-envelope me-2" style="color: #6366f1;"></i>Email Address
+              </label>
+              <input
+                type="email"
+                formControlName="email"
+                class="form-control"
+                placeholder="Enter customer's email address (e.g., john.doe@email.com)"
+                style="border: 1px solid #e2e8f0; border-radius: 8px; padding: 12px;"
+              />
+              <div class="mt-2" *ngIf="newCustomerFormGroup.controls['email'].touched && newCustomerFormGroup.controls['email'].errors?.['email']">
+                <span class="text-danger small d-flex align-items-center">
+                  <i class="bi bi-exclamation-circle me-1"></i>Please enter a valid email address
+                </span>
+              </div>
+            </div>
+
+            <!-- Form Actions -->
+            <div class="col-12 mt-4">
+              <div class="d-flex gap-3">
+                <button
+                  type="button"
+                  class="btn flex-fill"
+                  routerLink="/customers"
+                  style="background: #f1f5f9; color: #475569; border: 1px solid #e2e8f0; border-radius: 8px; padding: 12px;"
+                >
+                  <i class="bi bi-arrow-left me-2"></i>Back to Customers
+                </button>
+                <button
+                  [disabled]="!newCustomerFormGroup.valid"
+                  type="submit"
+                  class="btn flex-fill fw-bold"
+                  style="background: #10b981; color: white; border: none; border-radius: 8px; padding: 12px;"
+                >
+                  <i class="bi bi-check-circle me-2"></i>Create Customer
+                </button>
+              </div>
+            </div>
+          </form>
+        </div>
+      </div>
+
+      <!-- Help Information -->
+      <div class="card border mt-4" style="background: #f8fafc; border-radius: 12px;">
+        <div class="card-body p-4">
+          <h6 class="fw-semibold mb-3" style="color: #1e293b;">
+            <i class="bi bi-info-circle me-2" style="color: #6366f1;"></i>Important Notes
+          </h6>
+          <ul class="mb-0" style="color: #64748b; font-size: 0.875rem;">
+            <li class="mb-2">Customer name should be the full legal name as it appears on official documents</li>
+            <li class="mb-2">Email address will be used for account notifications and communications</li>
+            <li class="mb-0">Once created, customer accounts can be managed from the Customers page</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

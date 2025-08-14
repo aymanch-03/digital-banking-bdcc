@@ -1,0 +1,216 @@
+<div class="container-fluid p-4" style="background: #f8fafc; min-height: 100vh;">
+  <!-- Top Header Section -->
+  <div class="row mb-4">
+    <div class="col-12">
+      <div class="d-flex justify-content-between align-items-center">
+        <div>
+          <h1 class="fw-bold mb-1" style="color: #1e293b; font-size: 2rem;">
+            Customer Management
+          </h1>
+          <p class="text-muted mb-0" style="color: #64748b;">Search, view, and manage banking customers</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Search Section -->
+  <div class="row mb-4">
+    <div class="col-12">
+      <div class="card border" style="background: white; border-radius: 12px;">
+        <div class="card-body p-4">
+          <form
+            [formGroup]="searchFormGroup"
+            (ngSubmit)="handleSearchCustomers()"
+            *ngIf="searchFormGroup"
+            class="row g-3 align-items-end"
+          >
+            <div class="col-md-8">
+              <label class="form-label fw-medium mb-2" style="color: #475569;">Search Customers</label>
+              <input
+                type="text"
+                formControlName="keyword"
+                class="form-control"
+                placeholder="Search by customer name, email, or ID..."
+                style="border: 1px solid #e2e8f0; border-radius: 8px; padding: 12px;"
+              />
+            </div>
+            <div class="col-md-4">
+              <button class="btn w-100" type="submit" style="background: #6366f1; color: white; border: none; border-radius: 8px; padding: 12px;">
+                <i class="bi bi-search-heart me-2"></i>Search Customers
+              </button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Customers List Section -->
+  <div class="row" *ngIf="customers | async as listCustomers">
+    <div class="col-12">
+      <div class="card border" style="background: white; border-radius: 12px;">
+        <div class="card-header bg-transparent border-0 p-4">
+          <h5 class="fw-semibold mb-0" style="color: #1e293b;">
+            <i class="bi bi-people me-2" style="color: #6366f1;"></i>Customer Directory
+          </h5>
+          <p class="text-muted mb-0 mt-2" style="color: #64748b; font-size: 0.875rem;">
+            Manage customer accounts and information
+          </p>
+        </div>
+        <div class="card-body p-4 pt-0">
+          <!-- Customer Stats Row -->
+          <div class="row g-4 mb-4">
+            <div class="col-md-3">
+              <div class="text-center p-3" style="background: #f8fafc; border-radius: 8px;">
+                <h6 class="fw-medium mb-2" style="color: #64748b; font-size: 0.875rem;">Total Customers</h6>
+                <h3 class="fw-bold mb-0" style="color: #1e293b;">{{ listCustomers.length }}</h3>
+              </div>
+            </div>
+            <div class="col-md-3">
+              <div class="text-center p-3" style="background: #f8fafc; border-radius: 8px;">
+                <h6 class="fw-medium mb-2" style="color: #64748b; font-size: 0.875rem;">Active Accounts</h6>
+                <h3 class="fw-bold mb-0" style="color: #1e293b;">{{ listCustomers.length }}</h3>
+              </div>
+            </div>
+            <div class="col-md-3">
+              <div class="text-center p-3" style="background: #f8fafc; border-radius: 8px;">
+                <h6 class="fw-medium mb-2" style="color: #64748b; font-size: 0.875rem;">New This Month</h6>
+                <h3 class="fw-bold mb-0" style="color: #1e293b;">0</h3>
+              </div>
+            </div>
+            <div class="col-md-3">
+              <div class="text-center p-3" style="background: #f8fafc; border-radius: 8px;">
+                <h6 class="fw-medium mb-2" style="color: #64748b; font-size: 0.875rem;">Total Balance</h6>
+                <h3 class="fw-bold mb-0" style="color: #1e293b;">0.00 MAD</h3>
+              </div>
+            </div>
+          </div>
+
+          <!-- Customers Table -->
+          <div class="table-responsive">
+            <table class="table table-hover align-middle">
+              <thead style="background: #f8fafc;">
+                <tr>
+                  <th style="color: #475569; font-weight: 600; padding: 12px;">Customer ID</th>
+                  <th style="color: #475569; font-weight: 600; padding: 12px;">
+                    <i class="bi bi-person-circle me-2" style="color: #6366f1;"></i>Customer Name
+                  </th>
+                  <th style="color: #475569; font-weight: 600; padding: 12px;">
+                    <i class="bi bi-envelope me-2" style="color: #6366f1;"></i>Email Address
+                  </th>
+                  <th style="color: #475569; font-weight: 600; padding: 12px;">
+                    <i class="bi bi-calendar me-2" style="color: #6366f1;"></i>Registration Date
+                  </th>
+                  <th class="text-center" style="color: #475569; font-weight: 600; padding: 12px;">
+                    <i class="bi bi-gear me-2" style="color: #6366f1;"></i>Actions
+                  </th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr *ngFor="let c of listCustomers">
+                  <td style="color: #1e293b; padding: 12px;">
+                    <code style="background: #f1f5f9; padding: 4px 8px; border-radius: 4px; font-size: 0.875rem;">{{ c.id }}</code>
+                  </td>
+                  <td style="color: #1e293b; padding: 12px;">
+                    <div class="d-flex align-items-center">
+                      <div class="me-3" style="width: 40px; height: 40px; background: #6366f1; border-radius: 50%; display: flex; align-items: center; justify-content: center; color: white; font-weight: 600;">
+                        {{ c.name.charAt(0).toUpperCase() }}
+                      </div>
+                      <span class="fw-medium">{{ c.name }}</span>
+                    </div>
+                  </td>
+                  <td style="color: #1e293b; padding: 12px;">{{ c.email }}</td>
+                  <td style="color: #1e293b; padding: 12px;">Today</td>
+                  <td class="text-center">
+                    <div class="d-flex justify-content-center gap-2">
+                      <button
+                        class="btn btn-sm"
+                        (click)="handleCustomerAccount(c)"
+                        title="View Customer Accounts"
+                        style="background: #10b981; color: white; border: none; border-radius: 6px;"
+                      >
+                        <i class="bi bi-wallet2 me-1"></i>Accounts
+                      </button>
+                      <button
+                        class="btn btn-sm"
+                        (click)="openDeleteModal(c)"
+                        title="Delete Customer"
+                        style="background: #ef4444; color: white; border: none; border-radius: 6px;"
+                      >
+                        <i class="bi bi-trash3 me-1"></i>Delete
+                      </button>
+                    </div>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Loading State -->
+  <div *ngIf="!(customers | async)" class="text-center py-5">
+    <div class="spinner-border text-primary mb-3" role="status" style="width: 3rem; height: 3rem;">
+      <span class="visually-hidden">Loading...</span>
+    </div>
+    <p class="text-muted fs-5" style="color: #64748b;">Loading customer data...</p>
+  </div>
+
+  <!-- Error State -->
+  <div *ngIf="errorMessage" class="text-center py-5">
+    <div class="alert alert-danger d-inline-block" style="background: #fef2f2; color: #dc2626; border: 1px solid #fecaca; border-radius: 8px; padding: 16px 24px;">
+      <i class="bi bi-exclamation-triangle me-2"></i>{{ errorMessage }}
+    </div>
+  </div>
+
+  <!-- Delete Confirmation Modal -->
+  <div
+    class="modal fade"
+    id="deleteModal"
+    tabindex="-1"
+    aria-labelledby="deleteModalLabel"
+    aria-hidden="true"
+  >
+    <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content border-0" style="border-radius: 12px;">
+        <div class="modal-header bg-transparent border-0 p-4">
+          <h5 class="modal-title fw-semibold" id="deleteModalLabel" style="color: #1e293b;">
+            <i class="bi bi-exclamation-triangle me-2" style="color: #ef4444;"></i>Confirm Customer Deletion
+          </h5>
+          <button
+            type="button"
+            class="btn-close"
+            data-bs-dismiss="modal"
+            aria-label="Close"
+          ></button>
+        </div>
+        <div class="modal-body p-4 pt-0">
+          <p class="mb-0" style="color: #475569;">
+            Are you sure you want to delete customer <strong style="color: #1e293b;">{{ selectedCustomer?.name }}</strong>? 
+            This action cannot be undone and will remove all associated account data.
+          </p>
+        </div>
+        <div class="modal-footer bg-transparent border-0 p-4 pt-0">
+          <button
+            type="button"
+            class="btn"
+            data-bs-dismiss="modal"
+            style="background: #f1f5f9; color: #475569; border: 1px solid #e2e8f0; border-radius: 6px; padding: 8px 16px;"
+          >
+            Cancel
+          </button>
+          <button
+            type="button"
+            class="btn"
+            (click)="confirmDelete()"
+            style="background: #ef4444; color: white; border: none; border-radius: 6px; padding: 8px 16px;"
+          >
+            <i class="bi bi-trash3 me-1"></i>Delete Customer
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

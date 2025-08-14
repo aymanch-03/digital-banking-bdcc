@@ -1,0 +1,159 @@
+<div class="container-fluid p-4" style="background: #f8fafc; min-height: 100vh;">
+  <!-- Top Header Section -->
+  <div class="row mb-4">
+    <div class="col-12">
+      <div class="text-center">
+        <h1 class="fw-bold mb-1" style="color: #1e293b; font-size: 2rem;">
+          Action Logs & Audit Trail
+        </h1>
+        <p class="text-muted mb-0" style="color: #64748b;">Monitor and review system activities and user actions</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Search & Filter Section -->
+  <div class="row mb-4">
+    <div class="col-12">
+      <div class="card border" style="background: white; border-radius: 12px;">
+        <div class="card-body p-4">
+          <h6 class="fw-semibold mb-3" style="color: #1e293b;">
+            <i class="bi bi-funnel me-2" style="color: #6366f1;"></i>Filter Logs
+          </h6>
+          <form class="row g-3" (ngSubmit)="fetchFilteredLogs()">
+            <div class="col-md-4">
+              <label class="form-label fw-medium mb-2" style="color: #475569;">Username Filter</label>
+              <input
+                type="text"
+                class="form-control"
+                placeholder="Enter username to filter..."
+                [(ngModel)]="usernameFilter"
+                name="username"
+                style="border: 1px solid #e2e8f0; border-radius: 8px; padding: 12px;"
+              />
+            </div>
+            <div class="col-md-4">
+              <label class="form-label fw-medium mb-2" style="color: #475569;">Action Filter</label>
+              <input
+                type="text"
+                class="form-control"
+                placeholder="Enter action type to filter..."
+                [(ngModel)]="actionFilter"
+                name="action"
+                style="border: 1px solid #e2e8f0; border-radius: 8px; padding: 12px;"
+              />
+            </div>
+            <div class="col-md-4 d-flex gap-2 align-items-end">
+              <button type="submit" class="btn flex-fill" style="background: #6366f1; color: white; border: none; border-radius: 8px; padding: 12px;">
+                <i class="bi bi-search me-2"></i>Search Logs
+              </button>
+              <button type="button" class="btn flex-fill" (click)="resetFilters()" style="background: #f1f5f9; color: #475569; border: 1px solid #e2e8f0; border-radius: 8px; padding: 12px;">
+                <i class="bi bi-arrow-clockwise me-2"></i>Reset
+              </button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Logs Display Section -->
+  <div class="row">
+    <div class="col-12">
+      <div class="card border" style="background: white; border-radius: 12px;">
+        <div class="card-header bg-transparent border-0 p-4">
+          <h5 class="fw-semibold mb-0" style="color: #1e293b;">
+            <i class="bi bi-file-text me-2" style="color: #6366f1;"></i>System Activity Logs
+          </h5>
+          <p class="text-muted mb-0 mt-2" style="color: #64748b; font-size: 0.875rem;">
+            Detailed records of all system operations and user activities
+          </p>
+        </div>
+        <div class="card-body p-4 pt-0">
+          <!-- Error Message Display -->
+          <ng-container *ngIf="errorMessage">
+            <div class="alert alert-danger d-inline-block w-100" style="background: #fef2f2; color: #dc2626; border: 1px solid #fecaca; border-radius: 8px; padding: 16px 24px;">
+              <i class="bi bi-exclamation-triangle me-2"></i>{{ errorMessage }}
+            </div>
+          </ng-container>
+
+          <!-- Loading State -->
+          <div *ngIf="loading" class="text-center py-5">
+            <div class="spinner-border text-primary mb-3" role="status" style="width: 3rem; height: 3rem;">
+              <span class="visually-hidden">Loading logs...</span>
+            </div>
+            <p class="text-muted fs-5" style="color: #64748b;">
+              <i class="bi bi-file-earmark-text me-2"></i>Fetching system logs...
+            </p>
+          </div>
+
+          <!-- Logs Table -->
+          <div class="table-responsive" *ngIf="!loading && logs.length > 0">
+            <table class="table table-hover align-middle">
+              <thead style="background: #f8fafc;">
+                <tr>
+                  <th style="color: #475569; font-weight: 600; padding: 12px;">
+                    <i class="bi bi-hash me-2" style="color: #6366f1;"></i>Log ID
+                  </th>
+                  <th style="color: #475569; font-weight: 600; padding: 12px;">
+                    <i class="bi bi-clock me-2" style="color: #6366f1;"></i>Timestamp
+                  </th>
+                  <th style="color: #475569; font-weight: 600; padding: 12px;">
+                    <i class="bi bi-activity me-2" style="color: #6366f1;"></i>Action Type
+                  </th>
+                  <th style="color: #475569; font-weight: 600; padding: 12px;">
+                    <i class="bi bi-info-circle me-2" style="color: #6366f1;"></i>Description
+                  </th>
+                  <th style="color: #475569; font-weight: 600; padding: 12px;">
+                    <i class="bi bi-person me-2" style="color: #6366f1;"></i>Performed By
+                  </th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr *ngFor="let log of logs">
+                  <td style="color: #1e293b; padding: 12px;">
+                    <code style="background: #f1f5f9; padding: 4px 8px; border-radius: 4px; font-size: 0.875rem;">{{ log.id }}</code>
+                  </td>
+                  <td style="color: #1e293b; padding: 12px;">
+                    <div class="d-flex align-items-center">
+                      <i class="bi bi-calendar-event me-2" style="color: #6366f1; font-size: 0.875rem;"></i>
+                      {{ log.timestamp | date:'dd-MM-yyyy HH:mm:ss' }}
+                    </div>
+                  </td>
+                  <td style="color: #1e293b; padding: 12px;">
+                    <span class="badge px-3 py-2" style="background: #f8fafc; color: #475569; border: 1px solid #e2e8f0; border-radius: 6px;">
+                      {{ log.action }}
+                    </span>
+                  </td>
+                  <td style="color: #1e293b; padding: 12px;">
+                    <div class="text-wrap" style="max-width: 300px;">
+                      {{ log.description }}
+                    </div>
+                  </td>
+                  <td style="color: #1e293b; padding: 12px;">
+                    <div class="d-flex align-items-center">
+                      <div class="me-2" style="width: 32px; height: 32px; background: #6366f1; border-radius: 50%; display: flex; align-items: center; justify-content: center; color: white; font-weight: 600; font-size: 0.875rem;">
+                        {{ log.performedByUserId?.charAt(0)?.toUpperCase() || 'U' }}
+                      </div>
+                      <span class="fw-medium">{{ log.performedByUserId || 'System' }}</span>
+                    </div>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+
+          <!-- Empty State -->
+          <div *ngIf="!loading && logs.length === 0" class="text-center py-5">
+            <div style="width: 80px; height: 80px; background: #f1f5f9; border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 16px;">
+              <i class="bi bi-file-earmark-text" style="color: #64748b; font-size: 2rem;"></i>
+            </div>
+            <h6 class="fw-medium mb-2" style="color: #475569;">No Logs Found</h6>
+            <p class="text-muted mb-0" style="color: #64748b; font-size: 0.875rem;">
+              No activity logs match your current filters. Try adjusting your search criteria.
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
